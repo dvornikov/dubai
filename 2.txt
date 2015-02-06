@@ -1,0 +1,10 @@
+SELECT * FROM `products` `p`
+LEFT JOIN (
+    SELECT `as`.`orders`, `w`.`balance`, `w`.`products_id`, `as`.`date`
+    FROM `warehouse` `w`
+    INNER JOIN `agent_stats` `as` ON `w`.`products_id` = `as`.`products_id` AND `w`.`date` = `as`.`date`
+    INNER JOIN `agents` `a` ON `a`.`id` = `as`.`agent_id`
+    WHERE `as`.`date` >= DATE(NOW() - INTERVAL 1 DAY)
+) `d` ON `d`.`products_id` = `p`.`id`
+WHERE `d`.`balance` IS NOT NULL
+ORDER BY `p`.`id`;
